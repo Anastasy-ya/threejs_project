@@ -51,12 +51,12 @@ class Site3dThree {
     this.getObject3dMeshes(object3D, options ? options : undefined)
       // Далее вызов метода meshToBoundCenter, который не нужен
 
-      // .forEach(mesh => { // forEach не учитывает возможные вложения, traverse учитывает
+      .forEach(mesh => { // forEach не учитывает возможные вложения, traverse учитывает
       //   //передала опции в getObject3dMeshes
-      //   this.meshToBoundCenter(mesh,
-      //     { transformMatrix }
-      //   );
-      // });
+        this.meshToBoundCenter(mesh,
+          { transformMatrix }
+        );
+      });
   }
 
   /**
