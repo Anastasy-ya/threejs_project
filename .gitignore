@@ -1,0 +1,18 @@
+.git
+
+# General
+.DS_Store
+
+# Logs
+logs
+
+# Dependency directories
+node_modules/
+/dist
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
