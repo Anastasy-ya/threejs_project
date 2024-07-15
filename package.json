@@ -7,6 +7,7 @@
     "build": "webpack --config ./bundler/webpack.prod.js",
     "start": "webpack serve --config ./bundler/webpack.dev.js",
     "test": "echo \"Error: no test specified\" && exit 1",
+    "predeploy": "rm -rf build && npm run build",
     "deploy": "gh-pages -d dist"
   },
   "keywords": [],
@@ -37,5 +38,6 @@
     "lil-gui": "^0.18.2",
     "stats.js": "^0.17.0",
     "three": "^0.153.0"
-  }
+  },
+  "homepage": "https://anastasy-ya.github.io/threejs_project/"
 }
