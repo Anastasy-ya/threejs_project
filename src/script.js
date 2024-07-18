@@ -76,19 +76,21 @@ function handleLoadedModel(scene, model) {
         material.side = THREE.DoubleSide;
         material.flatShading = false;
       }
-
-      // Отрисовка ограничительного прямоугольника
-      const boxHelper = new THREE.BoxHelper(child, 0xff0000);
-      scene.add(boxHelper);
     }
   });
+
+  // Обновляем BoxHelpers после начальной настройки модели
+  site3d.updateBoxHelpers();
+
+  scene.add(model);
 }
 
 // Функция для анимации
-function animate(renderer, scene, camera, controls) {
+function animate(renderer, scene, camera, controls, site3d) {
   const animateFrame = () => {
     requestAnimationFrame(animateFrame);
     controls.update();
+    site3d.updateBoxHelpers(); // Обновляем BoxHelpers на каждом кадре
     renderer.render(scene, camera);
   };
   animateFrame();
@@ -111,7 +113,7 @@ loader.load(
     const model = gltf.scene;
     scene.add(model);
     handleLoadedModel(scene, model);
-    animate(renderer, scene, camera, controls);
+    animate(renderer, scene, camera, controls, new Site3dThree());
   },
   (xhr) => {
     console.log(`${(xhr.loaded / xhr.total * 100).toFixed(2)}% loaded`);

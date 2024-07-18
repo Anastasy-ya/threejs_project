@@ -7,6 +7,11 @@ import * as THREE from 'three';
  @param    {Scene} scene    Объект сцены
  */
 class Site3dThree {
+
+  constructor() {
+    this.boxHelpers = [];  // массив для BoxHelpers
+  }
+
   /**
    Метод возвращает массив мешей объекта three.js
    @method getObject3dMeshes
@@ -43,27 +48,24 @@ class Site3dThree {
    @param    {object} options       Дополнительные параметры
    */
   object3dToBoundCenter(object3D, options = undefined) {
-    const transformMatrix = new THREE.Matrix4();
-    // object3D.updateMatrixWorld(true);
-    transformMatrix.copy(object3D.matrixWorld);
-
     const meshes = this.getObject3dMeshes(object3D, options ? options : undefined);
 
     // Замена метода чтобы обработать меши второго и последующих вложенных уровней
     object3D.traverse((child) => {
-        if (child.isMesh && meshes.includes(child)) {
-            this.meshToBoundCenter(child, { transformMatrix });
-        }
+      if (child.isMesh && meshes.includes(child)) {
+        this.meshToBoundCenter(child);
+        this.addBoxHelper(child); // Добавляем BoxHelper
+      }
     });
-}
+  }
 
   /**
    Метод инициализирует начальные параметры меша
    @method meshInitParams
    @param    {Mesh} mesh   Клонируемые меши
    */
-  meshInitParams(mesh)
-  /*сохранить первоначальную позицию объекта в данных пользователя объекта */ {
+  meshInitParams(mesh) {
+    /*сохранить первоначальную позицию объекта в данных пользователя объекта */
     mesh.userData.initParams = {
       position: mesh.position.clone(),
       scale: mesh.scale.clone(),
@@ -95,25 +97,23 @@ class Site3dThree {
     const center = new THREE.Vector3();
 
     // Вычисление bounding box
+    geometry.computeBoundingBox();
     const boundingBox = geometry.boundingBox;
 
     // Вычисление центра bounding box
     if (boundingBox) {
       boundingBox.getCenter(center);
-      // boundingBox.update();//
     }
 
     // Центрирование geometry
     geometry.center();
 
     // Применение позиции к мешу
-    mesh.position.copy(center);
+    const offset = center.clone().applyMatrix4(mesh.matrixWorld);
+    mesh.position.copy(offset);
 
-    // Сохранение начальной позиции
-    const initPosition = mesh.userData?.initParams?.position;
-    if (initPosition) {
-      mesh.position.add(initPosition);
-    }
+    // Обновление матрицы
+    mesh.updateMatrixWorld(true);
 
     // Отметка о применении центрирования
     mesh.userData.isBoundCenter = true;
@@ -124,6 +124,26 @@ class Site3dThree {
     return center;
   }
 
+  /**
+   Метод для добавления BoxHelper к мешу
+   @method addBoxHelper
+   @param    {Mesh} mesh   Меш
+   */
+  addBoxHelper(mesh) {
+    const boxHelper = new THREE.BoxHelper(mesh, 0xffff00);
+    this.boxHelpers.push(boxHelper);
+    mesh.parent.add(boxHelper);
+  }
+
+  /**
+   Метод для обновления всех BoxHelper в сцене
+   @method updateBoxHelpers
+   */
+  updateBoxHelpers() {
+    this.boxHelpers.forEach(helper => {
+      helper.update();
+    });
+  }
 }
 
-export default Site3dThree
+export default Site3dThree;
