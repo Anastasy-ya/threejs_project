@@ -43,21 +43,19 @@ class Site3dThree {
    @param    {object} options       Дополнительные параметры
    */
   object3dToBoundCenter(object3D, options = undefined) {
-
     const transformMatrix = new THREE.Matrix4();
-    object3D.updateMatrixWorld(true);
+    // object3D.updateMatrixWorld(true);
     transformMatrix.copy(object3D.matrixWorld);
 
-    this.getObject3dMeshes(object3D, options ? options : undefined)
-      // Далее вызов метода meshToBoundCenter, который не нужен
+    const meshes = this.getObject3dMeshes(object3D, options ? options : undefined);
 
-      .forEach(mesh => { // forEach не учитывает возможные вложения, traverse учитывает
-      //   //передала опции в getObject3dMeshes
-        this.meshToBoundCenter(mesh,
-          { transformMatrix }
-        );
-      });
-  }
+    // Замена метода чтобы обработать меши второго и последующих вложенных уровней
+    object3D.traverse((child) => {
+        if (child.isMesh && meshes.includes(child)) {
+            this.meshToBoundCenter(child, { transformMatrix });
+        }
+    });
+}
 
   /**
    Метод инициализирует начальные параметры меша
@@ -81,7 +79,6 @@ class Site3dThree {
    @return    {Vector3}           Новая позиция меша
    */
 
-  // Метод не используется
   meshToBoundCenter(mesh, options = undefined) {
     // Проверка skinned meshes
     if (mesh.isSkinnedMesh || mesh.userData.isBoundCenter === true) {
@@ -103,6 +100,7 @@ class Site3dThree {
     // Вычисление центра bounding box
     if (boundingBox) {
       boundingBox.getCenter(center);
+      // boundingBox.update();//
     }
 
     // Центрирование geometry
