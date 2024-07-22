@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-import Model from './model.glb';
+import Model from './model2.glb';
 import Site3dThree from './site3d_dev';
 
 // Функция для инициализации сцены
