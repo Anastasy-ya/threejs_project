@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-import Model from './model2.glb';
+import Model from './model.glb';
 import Site3dThree from './site3d_dev';
 
 // Функция для инициализации сцены
@@ -57,7 +57,7 @@ function handleLoadedModel(scene, model) {
   // Трансформация родительского объекта
   model.position.set(0, 1, 0);
   model.rotation.set(Math.PI / 4, Math.PI / 4, Math.PI / 4);
-  model.scale.set(2, 1.5, 1);
+  model.scale.set(1.5, 1.5, 1);
 
   // Опции для исключения мешей из списка трасформируемых
   const options = {
@@ -69,6 +69,14 @@ function handleLoadedModel(scene, model) {
 
   model.traverse((child) => {
     if (child.isMesh) {
+      //apply transformations on
+      child.geometry.applyMatrix4(child.matrixWorld);
+      child.position.set(0, 0, 0);
+      child.rotation.set(0, 0, 0);
+      child.scale.set(1, 1, 1);
+      child.updateMatrix();
+      //off
+
       const material = child.material;
       if (material) {
         material.color = new THREE.Color(0xE0FFFF);
