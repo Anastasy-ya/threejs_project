@@ -69,13 +69,6 @@ function handleLoadedModel(scene, model) {
 
   model.traverse((child) => {
     if (child.isMesh) {
-      //apply transformations on
-      child.geometry.applyMatrix4(child.matrixWorld);
-      child.position.set(0, 0, 0);
-      child.rotation.set(0, 0, 0);
-      child.scale.set(1, 1, 1);
-      child.updateMatrix();
-      //off
 
       const material = child.material;
       if (material) {

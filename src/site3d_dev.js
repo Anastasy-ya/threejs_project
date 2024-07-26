@@ -55,6 +55,13 @@ class Site3dThree {
       if (child.isMesh && meshes.includes(child)) {
         this.meshToBoundCenter(child);
         this.addBoxHelper(child); // Добавляем BoxHelper
+        //apply transformations on
+        child.geometry.applyMatrix4(child.matrixWorld);
+        child.position.set(0, 0, 0);
+        child.rotation.set(0, 0, 0);
+        child.scale.set(1, 1, 1);
+        child.updateMatrix();
+        //apply transformations off
       }
     });
   }
